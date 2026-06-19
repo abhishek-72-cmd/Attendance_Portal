@@ -55,7 +55,7 @@ const startServer = async () => {
     await connectDB();
 
     // 🔥 Auto create/update tables
-    // await sequelize.sync({ alter: true });
+     await sequelize.sync({ alter: true });
 
     app.listen(port, () => {
       console.log(`🚀 Server running on http://localhost:${port}`);

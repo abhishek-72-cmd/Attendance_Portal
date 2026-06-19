@@ -1,6 +1,21 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
+// const sequelize = new Sequelize(
+//   process.env.DB_NAME,
+//   process.env.DB_USER,
+//   process.env.DB_PASSWORD,
+//   {
+//     host: process.env.DB_HOST,
+//     port: process.env.DB_PORT,
+//     dialect: "postgres",
+//     logging: false,
+//   }
+// );
+
+
+
+
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -10,17 +25,39 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT,
     dialect: "postgres",
     logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   }
 );
+
+
+
+// const connectDB = async () => {
+//   try {
+//     await sequelize.authenticate();
+//     console.log("✅ PostgreSQL Connected Successfully");
+//   } catch (error) {
+//     console.error("❌ DB Connection Failed:", error.message);
+//     process.exit(1);
+//   }
+// };
+
+
+
 
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ PostgreSQL Connected Successfully");
+    console.log("PostgreSQL Connected");
+
   } catch (error) {
-    console.error("❌ DB Connection Failed:", error.message);
-    process.exit(1);
+    console.error("DB Connection Error:", error);
   }
 };
+
 
 module.exports = { sequelize, connectDB };
