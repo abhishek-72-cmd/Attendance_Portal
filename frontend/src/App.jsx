@@ -15,7 +15,7 @@ import UserManagement from "../pages/UserManagement";
 import LeaveConfig from "../Leave/LeaveConfig";
 
 import ProtectedRoute from "../components/ProtectedRoute";
-
+import OAuthSuccess from "../Pages/OAuthSuccess"
 function App() {
   return (
     <BrowserRouter>
@@ -24,7 +24,7 @@ function App() {
         {/* Public */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/oauth-success" element={<OAuthSuccess/>}/>
         {/* Dashboards */}
    <Route path="/manager" element={
   <ProtectedRoute role="MANAGER">

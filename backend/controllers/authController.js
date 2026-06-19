@@ -37,7 +37,6 @@ const login = async (req, res) => {
   }
 };
 
-
 const register = async (req, res) => {
   try {
     const { name, email, password, role, manager_id } = req.body;
@@ -73,7 +72,6 @@ const hrOnly = async (req, res) => {
   }
 };
 
-
 const managerData = async (req, res) => {
   try {
     if (req.user.role !== "MANAGER") {
@@ -88,6 +86,5 @@ const managerData = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 module.exports = { login,register,hrOnly,managerData };

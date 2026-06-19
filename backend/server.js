@@ -1,8 +1,14 @@
-const express = require("express");
 require("dotenv").config();
+const express = require("express");
+
+
 const cors = require("cors");
+const passport = require("passport"); // ✅ import first
+require("./config/passport"); // ✅ then load strategy
 
 const app = express();
+app.use(passport.initialize());
+
 const port = process.env.PORT || 5000;
 
 // DB
@@ -30,6 +36,7 @@ app.use("/api/attendance", attendanceRoutes());
 app.use("/api/leave", leaveRoutes());
 app.use("/api/users", userRoutes());
 
+
 // Health check
 app.get("/", (req, res) => {
   res.send("Employee Attendance API Running...");
@@ -40,6 +47,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: "Internal Server Error" });
 });
+
+
 
 const startServer = async () => {
   try {

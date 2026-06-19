@@ -2,6 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 
+
 function userRoutes() {
   const router = express.Router();
 
@@ -43,6 +44,26 @@ function userRoutes() {
     roleMiddleware(["HR"]),
     assignManager
   );
+ 
+
+  
+router.put(
+  "/update-role/:id",
+  authMiddleware,
+  roleMiddleware(["HR"]),
+  async (req, res) => {
+    const { role } = req.body;
+
+    await User.update(
+      { role },
+      { where: { id: req.params.id } }
+    );
+
+    res.json({ message: "Role updated" });
+  }
+);
+
+
 
   return router;
 }

@@ -1,3 +1,6 @@
+const user = require("../models/userModel")
+
+
 const roleMiddleware = (allowedRoles) => {
   return (req, res, next) => {
     const userRole = req.user.role;
@@ -11,5 +14,9 @@ const roleMiddleware = (allowedRoles) => {
     next();
   };
 };
+
+
+
+
 
 module.exports = roleMiddleware;

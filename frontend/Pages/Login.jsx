@@ -76,6 +76,11 @@ export default function Login() {
     }
   };
 
+
+  const handleGoogleLogin = () => {
+  window.location.href = "http://localhost:5000/api/auth/google";
+};
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10 relative overflow-hidden">
 
@@ -141,6 +146,10 @@ export default function Login() {
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
+
+            <button onClick={handleGoogleLogin}>
+  Login with Google
+</button>
           </div>
 
           <p className="mt-6 text-center text-sm text-slate-300">
