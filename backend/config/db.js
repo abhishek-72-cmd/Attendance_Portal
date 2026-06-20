@@ -1,63 +1,63 @@
 const { Sequelize } = require("sequelize");
-require("dotenv").config();
 
-// const sequelize = new Sequelize(
-//   process.env.DB_NAME,
-//   process.env.DB_USER,
-//   process.env.DB_PASSWORD,
-//   {
-//     host: process.env.DB_HOST,
-//     port: process.env.DB_PORT,
-//     dialect: "postgres",
-//     logging: false,
-//   }
-// );
+function getDatabaseUrl() {
+  const {
+    DB_HOST,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT = "5432",
+  } = process.env;
 
-
-
-
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: "postgres",
-    logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+  // Prefer a complete set of explicit variables so a stale DATABASE_URL
+  // cannot silently override newer Neon credentials.
+  if (DB_HOST && DB_NAME && DB_USER && DB_PASSWORD) {
+    return `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(
+      DB_PASSWORD
+    )}@${DB_HOST}:${DB_PORT}/${encodeURIComponent(DB_NAME)}?sslmode=require`;
   }
-);
 
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
 
+    // Neon rejects unencrypted PostgreSQL connections.
+    if (!url.searchParams.has("sslmode")) {
+      url.searchParams.set("sslmode", "require");
+    }
 
-// const connectDB = async () => {
-//   try {
-//     await sequelize.authenticate();
-//     console.log("✅ PostgreSQL Connected Successfully");
-//   } catch (error) {
-//     console.error("❌ DB Connection Failed:", error.message);
-//     process.exit(1);
-//   }
-// };
+    return url.toString();
+  }
 
+  throw new Error(
+    "Set DATABASE_URL or all of DB_HOST, DB_NAME, DB_USER, and DB_PASSWORD"
+  );
+}
 
-
+const sequelize = new Sequelize(getDatabaseUrl(), {
+  dialect: "postgres",
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+});
 
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("PostgreSQL Connected");
-
+    console.log("PostgreSQL connected successfully");
   } catch (error) {
-    console.error("DB Connection Error:", error);
+    console.error("DB connection failed:", error.message);
+    throw error;
   }
 };
-
 
 module.exports = { sequelize, connectDB };

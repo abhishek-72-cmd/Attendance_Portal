@@ -55,13 +55,17 @@ const startServer = async () => {
     await connectDB();
 
     // 🔥 Auto create/update tables
-     await sequelize.sync({ alter: true });
+    if (process.env.DB_SYNC === "true") {
+      await sequelize.sync({ alter: true });
+      console.log("Database schema synchronized");
+    }
 
     app.listen(port, () => {
       console.log(`🚀 Server running on http://localhost:${port}`);
     });
   } catch (error) {
     console.error("❌ Server failed to start:", error);
+    process.exit(1);
   }
 };
 
